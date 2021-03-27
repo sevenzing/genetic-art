@@ -1,1 +1,1 @@
-from .tools import check_chance
+from .tools import *

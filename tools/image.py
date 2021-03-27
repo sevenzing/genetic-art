@@ -6,7 +6,7 @@ from math import cos, sin, radians, sqrt
 
 def compare_images(im1, im2):
     """
-    Calculates the root mean square 
+    Calculates the root mean square
     error (RSME) between two images
     """
     errors = np.asarray(ImageChops.difference(im1, im2)) / 255
@@ -15,6 +15,7 @@ def compare_images(im1, im2):
 
 def get_blank_image(size: Tuple[int, int]) -> Image.Image:
     return Image.new('RGBA', size, WHITE)
+
 
 def apply_matrix(img: Image.Image, x, y, rotation, scale) -> Image.Image:
     # translate
@@ -68,5 +69,3 @@ def affine(img: Image.Image, scale_x, scale_y, shift_x, shift_y, new_size):
         (1 / scale_x, 0, -shift_x, 0, 1 / scale_y, -shift_y),
         fillcolor=WHITE,
         )
-
-    

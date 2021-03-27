@@ -1,26 +1,34 @@
 import random
-from config import SIZE, MIN_OPACTIRY, MIN_SCALE
-from tools.image import get_blank_image, get_image, apply_matrix, set_opacity_inplace
-from tools.timer import MeasureTime
-import numpy as np
 import time
 
+import numpy as np
+
+from config import (
+    SIZE,
+    )
+from tools.image import (apply_matrix, get_image,
+                         set_opacity_inplace)
+from tools.timer import MeasureTime
+from tools import random_opacity, random_rotation, random_scale
 
 
 class Figure:
     source = None
-    def __init__(self, x=None, y=None, rotation=None, opacity=None, scale=None):
+    def __init__(self, x=None, y=None, rotation=None, opacity=None, scale=None, img=None):
         self.x = x or random.randint(0, SIZE[0])
         self.y = y or random.randint(0, SIZE[1])
-        self.rotation = rotation or random.randint(0, 360)
-        self.opacity = opacity or random.uniform(MIN_OPACTIRY, 1)
-        self.scale = scale or random.uniform(MIN_SCALE, 1)
+        self.rotation = rotation or random_rotation()
+        self.opacity = opacity or random_opacity()
+        self.scale = scale or random_scale()
+        
         self.source = self.__class__.source
-
-        self.update()
+        if img:
+            self.img = img
+        else:
+            self.img = self.__get_image()
 
     def copy(self):
-        return self.__class__(self.x, self.y, self.rotation, self.opacity, self.scale)
+        return self.__class__(self.x, self.y, self.rotation, self.opacity, self.scale, self.img.copy())
 
     def update(self):
         self.img = self.__get_image()
@@ -37,11 +45,11 @@ class Figure:
         elif mode == 1:
             self.y = random.randint(0, SIZE[1])
         elif mode == 2:
-            self.rotation = random.randint(0, 360)
+            self.rotation = random_rotation()
         elif mode == 3:
-            self.opacity = random.uniform(MIN_OPACTIRY, 1)
+            self.opacity = random_opacity()
         elif mode == 4:
-            self.scale = random.uniform(MIN_SCALE, 1)
+            self.scale = random_scale()
 
 
     def __get_image(self):
@@ -59,8 +67,10 @@ class Figure:
         return f"{self.__class__.__name__}{self.x, self.y}"
 
 class Cat(Figure):
-    source = get_image('images/cat.jpg')
+    source = get_image('images/cat.jpg', (512, 512))
 
+class Cat2(Figure):
+    source = get_image('images/cat2.jpg', (512, 256))
 
 
 
@@ -70,4 +80,5 @@ def get_random_figure() -> Figure:
 
 FIGURES = [
     Cat,
+    Cat2,
 ]

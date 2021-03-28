@@ -1,11 +1,24 @@
+import os
+
+EMOJI_PATH = 'emoji_selected/'
+
+DNA_IMAGE_SIZE = (16, 16)
+
+
 SIZE = (512, 512)
 
+OUTPUT_DIR = 'output'
 
-INDIVIDUAL_SIZE = 50
+
+INDIVIDUAL_SIZE = 1024
 
 POPULATION_SIZE = 30
 
-ITERS = 10**4
+ITERS = 3 * 3600 * 10
+
+GRID_DIVISION = 16
+
+MUTATION_CHACE = 0.5
 
 
 MIN_OPACTIRY = 0.3
@@ -17,3 +30,11 @@ MAX_SCALE = 0.5
 # rotation in degrees
 MIN_ROTATION = 0
 MAX_ROTATION = 0
+
+
+ON_GPU = os.environ.get('ON_GPU', False)
+
+if ON_GPU:
+    import cupy as numpy
+else:
+    import numpy

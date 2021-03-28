@@ -1,84 +1,68 @@
 import random
 import time
 
-import numpy as np
+from config import numpy as np
+from PIL import Image
 
 from config import (
-    SIZE,
+    SIZE, EMOJI_PATH
     )
-from tools.image import (apply_matrix, get_image,
-                         set_opacity_inplace)
+from os.path import join as join_path
+
+from tools.image import get_image, compare_images
 from tools.timer import MeasureTime
-from tools import random_opacity, random_rotation, random_scale
+from tools import random_emoji, random_coordinate
 
 
 class Figure:
-    source = None
-    def __init__(self, x=None, y=None, rotation=None, opacity=None, scale=None, img=None):
-        self.x = x or random.randint(0, SIZE[0])
-        self.y = y or random.randint(0, SIZE[1])
-        self.rotation = rotation or random_rotation()
-        self.opacity = opacity or random_opacity()
-        self.scale = scale or random_scale()
-        
-        self.source = self.__class__.source
-        if img:
-            self.img = img
+    def __init__(self, coordinate, fragmet_to_cmp, img=None, score=None):
+        self.coordinate = coordinate
+        self.fragmet_to_cmp = fragmet_to_cmp
+
+        if not img is None:
+            self.__img = img
         else:
-            self.img = self.__get_image()
+            self.__img = random_emoji()
+        
+        self.size = self.__img.size
+        self.__score = score or None
+        self.relevant_score = False
+
+    @property
+    def score(self):
+        if not self.relevant_score:
+            self.__score = compare_images(self.__img, self.fragmet_to_cmp)
+            self.relevant_score = True
+        return self.__score
+
+    @property
+    def img(self):
+        return Image.fromarray(self.__img)
 
     def copy(self):
-        return self.__class__(self.x, self.y, self.rotation, self.opacity, self.scale, self.img.copy())
-
-    def update(self):
-        self.img = self.__get_image()
+        return Figure(self.coordinate, self.fragmet_to_cmp, self.__img.copy(), self.score)
     
-    def mutate(self, n=1):
-        for mode in random.sample(range(5), n):
-            self.__mutate(mode)
-        self.update()
+    def mutate(self):
+        self.relevant_score = False
+        self.__mutate()
 
-    def __mutate(self, mode):
-        assert 0 <= mode <= 4
-        if mode == 0:
-            self.x = random.randint(0, SIZE[0])
-        elif mode == 1:
-            self.y = random.randint(0, SIZE[1])
-        elif mode == 2:
-            self.rotation = random_rotation()
-        elif mode == 3:
-            self.opacity = random_opacity()
-        elif mode == 4:
-            self.scale = random_scale()
+    def __mutate(self):
+        self.__img = random_emoji()
 
-
-    def __get_image(self):
-        """
-        Return image
-        """
-        img = self.source.copy()
-        set_opacity_inplace(img, self.opacity)
-        return apply_matrix(img, self.x, self.y, self.rotation, self.scale)
+    def __ge__(self, value):
+        return self.score.__ge__(value.score)
+    
+    def __gt__(self, value):
+        return self.score.__gt__(value.score)
+    
+    def __le__(self, value):
+        return value.__ge__(self)
+    
+    def __lt__(self, value):
+        return value.__gt__(self)
 
     def __str__(self):
-        return f"{self.__class__.__name__}{self.x, self.y, self.rotation, self.opacity, self.scale}"
+        return f"{self.__class__.__name__}{self.coordinate}"
 
     def __repr__(self):
-        return f"{self.__class__.__name__}{self.x, self.y}"
-
-class Cat(Figure):
-    source = get_image('images/cat.jpg', (512, 512))
-
-class Cat2(Figure):
-    source = get_image('images/cat2.jpg', (512, 256))
-
-
-
-def get_random_figure() -> Figure:
-    return random.choice(FIGURES)()
-
-
-FIGURES = [
-    Cat,
-    Cat2,
-]
+        return f"{self.__class__.__name__}{self.coordinate}"

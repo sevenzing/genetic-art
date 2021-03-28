@@ -2,10 +2,11 @@ import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from multiprocessing import Pool, cpu_count
 from config import (
-    MIN_OPACTIRY, MAX_OPACTIRY,
-    MIN_ROTATION, MAX_ROTATION,
-    MIN_SCALE, MAX_SCALE,
+    GRID_DIVISION, SIZE,
 )
+from os import listdir, mkdir
+from os.path import isfile, join
+
 
 def check_chance(chance):
     return random.random() <= chance
@@ -35,11 +36,22 @@ def multiprocess_task(target, arg_list, max_workers=cpu_count()):
         )
 
 
-def random_opacity():
-    return random.uniform(MIN_OPACTIRY, MAX_OPACTIRY)
+def random_coordinate():
+    x = round(random.randint(0, SIZE[0]) / GRID_DIVISION) * GRID_DIVISION
+    y = round(random.randint(0, SIZE[1]) / GRID_DIVISION) * GRID_DIVISION
+    return x, y
+    
 
-def random_scale():
-    return random.uniform(MIN_SCALE, MAX_SCALE)
 
-def random_rotation():
-    return random.randint(MIN_ROTATION, MAX_ROTATION)
+def get_all_files(directory):
+    return [
+        join(directory, f) 
+            for f in listdir(directory) 
+                if isfile(join(directory, f)) and not f.startswith('.')
+        ]
+
+def create_dir(path):
+    try:
+        mkdir(path)
+    except FileExistsError:
+        pass

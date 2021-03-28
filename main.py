@@ -1,10 +1,11 @@
 from genetic import Genetic
 from tools.image import get_image
+from config import SIZE
 import logging
+logging.basicConfig(level=logging.WARNING)
 
-
-logging.basicConfig(level=logging.INFO)
-
-target_image = get_image('images/she.jpg')
+target_image = get_image('images/smile.png', SIZE)
 
 g = Genetic(target_image)
+
+g.run(False)

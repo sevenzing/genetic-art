@@ -1,20 +1,40 @@
 from PIL import Image, ImageChops
-import numpy as np
+from config import numpy as np
 from typing import Tuple
-from constants import WHITE, BLACK
+from constants import TRANSPARENT
 from math import cos, sin, radians, sqrt
 
+'''
 def compare_images(im1, im2):
     """
     Calculates the root mean square
     error (RSME) between two images
     """
     errors = np.asarray(ImageChops.difference(im1, im2)) / 255
-    return sqrt(np.mean(np.square(errors)))
+    return np.sum(np.abs(errors))
+'''
 
+def compare_images(im1, im2):
+    error_matrix = np.abs(im1 - im2)
+    total_error_num = error_matrix.shape[0] * error_matrix.shape[1] * error_matrix.shape[2]
+    mean_error = np.sum(error_matrix)/total_error_num
+    fitness = 255 - mean_error
+    return fitness
+
+
+def image_fitness_pixel_by_pixel(image1: np.ndarray, image2: np.ndarray):
+    """
+
+    """
+
+    error_matrix = np.abs(image1 - image2)
+    total_error_num = error_matrix.shape[0] * error_matrix.shape[1] * error_matrix.shape[2]
+    mean_error = np.sum(error_matrix)/total_error_num
+    fitness = 255 - mean_error
+    return fitness
 
 def get_blank_image(size: Tuple[int, int]) -> Image.Image:
-    return Image.new('RGBA', size, WHITE)
+    return Image.new('RGBA', size, TRANSPARENT)
 
 
 def apply_matrix(img: Image.Image, x, y, rotation, scale) -> Image.Image:
@@ -43,19 +63,23 @@ def apply_matrix(img: Image.Image, x, y, rotation, scale) -> Image.Image:
 
 
 def alpha_rotate(img: Image.Image, angle: int) -> Image.Image:
-    return img.rotate(angle, expand=True, fillcolor=WHITE)
+    return img.rotate(angle, expand=True, fillcolor=TRANSPARENT)
 
 
-def get_image(path: str, size=(512, 512), toRGBA=True) -> Image.Image:
+def get_image(path: str, size=None, toRGBA=True):
     img: Image.Image = Image.open(path)
     if toRGBA:
         img = img.convert('RGBA')
 
     if size:
-        return img.resize(size)
-    else:
-        return img
+        img = img.resize(size)
+    
+    return img
         
+def get_raw_image(path: str, size=None, toRGBA=True):
+    img = get_image(path, size, toRGBA)
+    return np.array(img)
+
 
 def set_opacity_inplace(img: Image.Image, opacity: float) -> None:
     img.putalpha(int(255 * opacity))
@@ -67,5 +91,14 @@ def affine(img: Image.Image, scale_x, scale_y, shift_x, shift_y, new_size):
         new_size, 
         Image.AFFINE, 
         (1 / scale_x, 0, -shift_x, 0, 1 / scale_y, -shift_y),
-        fillcolor=WHITE,
+        fillcolor=TRANSPARENT,
         )
+
+
+def low_image(img: Image.Image) -> Image.Image:
+    """
+    TODO: doc string
+    """
+    new_size = np.array(img.size) // 8
+
+    return img.resize(tuple(new_size))

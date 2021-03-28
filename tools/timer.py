@@ -13,7 +13,9 @@ class MeasureTime:
         self.took = (timeit.default_timer() - self.start) * 1000.0
         msg = f"Code block{self.name} took: {self.took} ms"
         
-        if self.level == 'info':
+        if self.level == 'warning':
+            logging.warning(msg)
+        elif self.level == 'info':
             logging.info(msg)
         else:
             logging.debug(msg)

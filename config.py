@@ -34,7 +34,14 @@ MAX_ROTATION = 0
 
 ON_GPU = os.environ.get('ON_GPU', False)
 
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'warning')
+
+TARGET_IMAGE = os.environ.get('TARGET_IMAGE', 'images/smile.jpg')
+
+os.environ.putenv
+
 if ON_GPU:
+    print('START ON GPU'.center(35, '='))
     import cupy as numpy
 else:
     import numpy

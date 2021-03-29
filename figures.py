@@ -2,6 +2,7 @@ import random
 import time
 
 from config import numpy as np
+import numpy as real_numpy
 from PIL import Image
 
 from config import (
@@ -37,16 +38,21 @@ class Figure:
 
     @property
     def img(self):
-        return Image.fromarray(self.__img)
+        # shitty workaround because cupy is shit
+        try:
+            img = Image.fromarray(self.__img.astype('uint8'))
+        except AttributeError:
+            img = Image.fromarray(np.asnumpy(self.__img))
+        return img
 
     def copy(self):
         return Figure(self.coordinate, self.fragmet_to_cmp, self.__img.copy(), self.score)
     
     def mutate(self):
-        self.relevant_score = False
         self.__mutate()
 
     def __mutate(self):
+        self.relevant_score = False
         self.__img = random_emoji()
 
     def __ge__(self, value):

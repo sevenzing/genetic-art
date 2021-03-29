@@ -69,7 +69,7 @@ class Individual:
         
         self.relevant_image = False
         with MeasureTime(f'mutation of {N} DNA', level='debug'):
-            for dna in sorted(self.figures)[:N]:
+            for dna in sorted(self.figures, reverse=True)[:N]:
                 self.score -= dna.score
                 dna.mutate()
                 self.score += dna.score

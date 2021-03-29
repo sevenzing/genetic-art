@@ -3,8 +3,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from multiprocessing import Pool, cpu_count
 from config import (
     GRID_DIVISION, SIZE,
+    DEFAULT_PROCESSES,
 )
-from os import listdir, mkdir
+from os import listdir, makedirs
 from os.path import isfile, join
 
 
@@ -12,7 +13,7 @@ def check_chance(chance):
     return random.random() <= chance
 
 
-def parallelize_task(target, args_list, max_workers=8):
+def parallelize_task(target, args_list, max_workers=DEFAULT_PROCESSES):
     """
     Parallelize function call using threads
     """
@@ -52,6 +53,6 @@ def get_all_files(directory):
 
 def create_dir(path):
     try:
-        mkdir(path)
+        makedirs(path)
     except FileExistsError:
         pass

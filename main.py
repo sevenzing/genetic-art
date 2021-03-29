@@ -14,4 +14,4 @@ target_image = get_image(TARGET_IMAGE, SIZE)
 
 g = Genetic(target_image)
 
-g.run(False)
+g.run(True)

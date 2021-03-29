@@ -18,7 +18,11 @@ ITERS = 3 * 3600 * 10
 
 GRID_DIVISION = 16
 
+# chance of individual to mutate
 MUTATION_CHACE = 0.5
+
+# how many figues mutate 
+PORTION_OF_MUTATION = 0.05
 
 
 MIN_OPACTIRY = 0.3
@@ -31,6 +35,7 @@ MAX_SCALE = 0.5
 MIN_ROTATION = 0
 MAX_ROTATION = 0
 
+DEFAULT_PROCESSES = 8
 
 ON_GPU = os.environ.get('ON_GPU', False)
 

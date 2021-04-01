@@ -4,6 +4,7 @@ from multiprocessing import Pool, cpu_count
 from config import (
     GRID_DIVISION, SIZE,
     DEFAULT_PROCESSES,
+    ON_GPU,
 )
 from os import listdir, makedirs
 from os.path import isfile, join
@@ -19,22 +20,16 @@ def parallelize_task(target, args_list, max_workers=DEFAULT_PROCESSES):
     """
     if isinstance(args_list, int):
         args_list = [() for _ in range(args_list)]
-
-    with ThreadPoolExecutor(max_workers) as executor:
-        futures = [executor.submit(target, *args) for args in args_list]
-        result = [future.result() for future in as_completed(futures)]
-    return result
-
-
-def multiprocess_task(target, arg_list, max_workers=cpu_count()):
-    """
     
-    """
-    with Pool(max_workers) as pool:
-        return pool.map(
-            target,
-            arg_list,
-        )
+    if ON_GPU:
+        # No threads
+        result = [target(*args) for args in args_list]
+    else:
+        with ThreadPoolExecutor(max_workers) as executor:
+            futures = [executor.submit(target, *args) for args in args_list]
+            result = [future.result() for future in as_completed(futures)]
+    
+    return result
 
 
 def random_coordinate():

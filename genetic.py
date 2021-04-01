@@ -35,7 +35,7 @@ class Genetic:
         Run genetic algorithm
         """
         try:
-            prev_score = 1024
+            prev_score = INDIVIDUAL_SIZE
             mutation_chance = MUTATION_CHACE
             portion_of_mutation = PORTION_OF_MUTATION
             mutate_worst = True
@@ -61,6 +61,7 @@ class Genetic:
                         delta = best.score - prev_score
                         prev_score = best.score
                         if delta > 1024 * 0.001:
+                            # switch to random mode
                             mutate_worst = False
                             mutation_chance = 1 / 30
                             portion_of_mutation = 5 / 1024
@@ -106,7 +107,7 @@ class Genetic:
         Mutate population
         """
         with MeasureTime('mutation'):
-            to_mutate = self.population[self.get_save_index():]
+            to_mutate = self.population
             args_list = [(ind, chance, int(INDIVIDUAL_SIZE * share), mutate_worst) for ind in to_mutate]
             parallelize_task(Individual.mutate, args_list)
     

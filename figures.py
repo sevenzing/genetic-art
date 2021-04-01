@@ -53,13 +53,24 @@ class Figure:
         self.__mutate()
 
     def __mutate(self):
-        self.relevant_score = False
-        self.mutate_count += 1
+        prev_image = self.__img
+        prev_score = self.score
+
         self.__img = random_emoji()
+        self.relevant_score = False
+        
+        if self.score < prev_score:
+            # ok
+            self.mutate_count += 1
+        else:
+            # back to prev image
+            self.relevant_score = True
+            self.__img = prev_image
+            self.__score = prev_score
 
     @property
     def compare_score(self):
-        return self.score + self.mutate_count * 0.05
+        return self.score + self.mutate_count * 0.01
 
     def __ge__(self, value):
         return self.compare_score.__ge__(value.compare_score)

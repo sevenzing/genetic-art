@@ -4,7 +4,7 @@ from typing import Tuple
 from constants import TRANSPARENT
 from math import cos, sin, radians, sqrt
 import matplotlib.pyplot as plt
-
+from .tools import get_all_files
 
 
 def compare_images(im1, im2):
@@ -97,6 +97,51 @@ def low_image(img: Image.Image) -> Image.Image:
 
     return img.resize(tuple(new_size))
 
+
+def compose_in_gif(images, output_file, delay):
+    """
+    Creates gif from `images`, save it to `output_file`.
+    delay between images in gif is `delay`
+    """
+    images[0].save(
+        output_file, 
+        format='GIF', append_images=images[1:], 
+        save_all=True, duration=delay, loop=0,
+        )
+
+
+def merge_images(images, axis=0):
+    """
+    Merge all `images` into one image
+    according to `axis`
+    """
+    assert axis in [0, 1]
+    total_len = sum(map(lambda i: i.size[axis], images))
+    if axis == 0:
+        new_shape = (total_len, images[0].size[1])
+        step = images[0].size[0]
+    else:
+        new_shape = (images[0].size[0], total_len)
+        step = images[0].size[1]
+
+    canvas = Image.new('RGB', new_shape)
+
+    for i, image in enumerate(images):
+        if axis == 0:
+            canvas.paste(image, (i * step, 0))
+        else:
+            canvas.paste(image, (0, i * step))
+
+    return canvas
+
+
+def create_animation(directory, target_image, output_file):
+    filenames = sorted(get_all_files(directory))
+    print(filenames)
+    images = map(get_image, filenames)
+    merged_images = list(map(lambda i: merge_images([target_image, i]), images))
+    
+    compose_in_gif(merged_images, output_file, 500)
 
 
 def show_image(img, name):

@@ -14,3 +14,9 @@ Image approximation using emoji
 
 3. 1000 iterations
 ![](images/creeper.gif)
+
+4. 2000 iterations
+![](images/minion.gif)
+
+4. 4000 iterations
+![](images/lenna.gif)

@@ -2,7 +2,7 @@ import datetime
 import logging
 import os
 import pickle
-from random import randint, sample
+from random import randint, sample, shuffle
 from PIL.Image import Image
 
 from config import numpy as np
@@ -60,7 +60,7 @@ class Individual:
         
         return canvas
         
-    def mutate(self, chance, N):
+    def mutate(self, chance, N, mutate_worst=True):
         """
         Inplace mutation of individual
         """
@@ -69,7 +69,12 @@ class Individual:
         
         self.relevant_image = False
         with MeasureTime(f'mutation of {N} DNA', level='debug'):
-            for dna in sorted(self.figures, reverse=True)[:N]:
+            if mutate_worst:
+                to_mutate = sorted(self.figures, reverse=True)[:N] 
+            else:
+                to_mutate = np.random.permutation(self.figures)[:N]
+
+            for dna in to_mutate:
                 self.score -= dna.score
                 dna.mutate()
                 self.score += dna.score

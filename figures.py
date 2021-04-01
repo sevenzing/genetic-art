@@ -19,6 +19,7 @@ class Figure:
     def __init__(self, coordinate, fragmet_to_cmp, img=None, score=None):
         self.coordinate = coordinate
         self.fragmet_to_cmp = fragmet_to_cmp
+        self.mutate_count = 0
 
         if not img is None:
             self.__img = img
@@ -53,13 +54,18 @@ class Figure:
 
     def __mutate(self):
         self.relevant_score = False
+        self.mutate_count += 1
         self.__img = random_emoji()
 
+    @property
+    def compare_score(self):
+        return self.score + self.mutate_count * 0.05
+
     def __ge__(self, value):
-        return self.score.__ge__(value.score)
+        return self.compare_score.__ge__(value.compare_score)
     
     def __gt__(self, value):
-        return self.score.__gt__(value.score)
+        return self.compare_score.__gt__(value.compare_score)
     
     def __le__(self, value):
         return value.__ge__(self)

@@ -3,3 +3,6 @@ __pycache__
 *.ipynb*
 *pickle
 emoji*/
+!emoji_selected
+output*/
+*_merged.png

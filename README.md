@@ -1,6 +1,15 @@
 Image approximation using emoji
 ===
 
+## How to run
+
+```
+python -m pip install -r requirements.txt
+TARGET_IMAGE=/path/to/image python main.py
+```
+
+You can find output images in `output/<unique id for each run>/`
+
 ## Examples
 
 1. 31337 iterations

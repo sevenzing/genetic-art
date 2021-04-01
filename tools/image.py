@@ -126,11 +126,14 @@ def merge_images(images, axis=0):
 
     canvas = Image.new('RGB', new_shape)
 
-    for i, image in enumerate(images):
+    shift = 0
+    for image in images:
         if axis == 0:
-            canvas.paste(image, (i * step, 0))
+            canvas.paste(image, (shift, 0))
         else:
-            canvas.paste(image, (0, i * step))
+            canvas.paste(image, (0, shift))
+        
+        shift += image.size[axis]
 
     return canvas
 

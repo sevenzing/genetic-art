@@ -19,7 +19,7 @@ ITERS = 3 * 3600 * 10
 GRID_DIVISION = 16
 
 # chance of individual to mutate
-MUTATION_CHACE = 0.5
+MUTATION_CHACE = 5 / 30
 
 # how many figues mutate 
 PORTION_OF_MUTATION = 0.05

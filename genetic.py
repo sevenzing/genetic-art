@@ -38,9 +38,13 @@ class Genetic:
             prev_score = 1024
             mutation_chance = MUTATION_CHACE
             portion_of_mutation = PORTION_OF_MUTATION
+            mutate_worst = True
 
             for iterNumber in range(ITERS):
                 with MeasureTime('one iter', level='info'):
+                    self.evaluate()
+                    self.population.sort()
+                    
                     if iterNumber % 100 == 0:
                         best = self.best
                         worse = self.worse
@@ -48,20 +52,19 @@ class Genetic:
                         logging.warning(title)
                         if show_img:
                             show_image(best.img, title)
-                            directory = join(OUTPUT_DIR, self._id)
-                            create_dir(directory)
-                            best.img.save(join(directory, f"{iterNumber // 100}.png"))
+                        
+                        directory = join(OUTPUT_DIR, self._id)
+                        create_dir(directory)
+                        image_name = f"{str(iterNumber // 100).zfill(4)}.png"
+                        best.img.save(join(directory, image_name))
 
                         delta = best.score - prev_score
                         prev_score = best.score
                         if delta > 1024 * 0.001:
-                            mutation_chance += 0.05
-                            portion_of_mutation = max(portion_of_mutation - 0.001, 0.005)
-                            logging.warning(f"Delta is {delta}. New chance: {mutation_chance}, share: {portion_of_mutation}")
-
-
-                    self.evaluate()
-                    self.population.sort()
+                            mutate_worst = False
+                            mutation_chance = 1 / 30
+                            portion_of_mutation = 5 / 1024
+                            logging.warning(f"Delta is {delta}. New chance: {mutation_chance}, share: {portion_of_mutation}, mutate_worst={mutate_worst}")
 
                     new_population = self.crossover()
                     self.select()
@@ -70,7 +73,7 @@ class Genetic:
                     
                     assert self.size == POPULATION_SIZE
                     
-                    self.mutation(mutation_chance, portion_of_mutation)
+                    self.mutation(mutation_chance, portion_of_mutation, mutate_worst)
 
             
             self.best.save(OUTPUT_DIR)
@@ -98,13 +101,17 @@ class Genetic:
 
         return new_individuals
 
-    def mutation(self, chance, share):
+    def mutation(self, chance: float, share: float, mutate_worst: bool):
         """
         Mutate population
         """
         with MeasureTime('mutation'):
-            args_list = [(ind, chance, int(INDIVIDUAL_SIZE * share)) for ind in self.population]
+            to_mutate = self.population[self.get_save_index():]
+            args_list = [(ind, chance, int(INDIVIDUAL_SIZE * share), mutate_worst) for ind in to_mutate]
             parallelize_task(Individual.mutate, args_list)
+    
+    def get_save_index(self):
+        return int(self.size * 3 / 8)
     
     def select(self):
         """
@@ -113,7 +120,7 @@ class Genetic:
         Assume that self.population is sorted
         """
 
-        save_index = int(self.size * 3 / 8)
+        save_index = self.get_save_index()
         with MeasureTime('select'):
             while self.size > POPULATION_SIZE//2:
                 index_to_remove = randint(save_index + 1, self.size - 1)

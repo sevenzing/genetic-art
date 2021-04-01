@@ -2,16 +2,15 @@ from genetic import Genetic
 from tools.image import get_image
 from config import SIZE, TARGET_IMAGE, LOG_LEVEL
 import logging
+def main(show):
+    level = logging.getLevelName(LOG_LEVEL.upper())
 
+    print(f"Set log level to {level}")
 
-level = logging.getLevelName(LOG_LEVEL.upper())
+    logging.basicConfig(level=level)
 
-print(f"Set log level to {level}")
+    target_image = get_image(TARGET_IMAGE, SIZE)
 
-logging.basicConfig(level=level)
+    g = Genetic(target_image)
 
-target_image = get_image(TARGET_IMAGE, SIZE)
-
-g = Genetic(target_image)
-
-g.run(True)
+    g.run(show)

@@ -12,20 +12,27 @@ You can find output images in `output/<unique id for each run>/`
 
 ## Examples
 
+1. 400 iterations
+
+![](images/gif/cool.gif)
+
 1. 31337 iterations
 ![](images/gif/haskell.gif)
 
-2. 1500 iterations
+1. 1500 iterations
 ![](images/gif/inno.gif)
 
-2. 4500 iterations
+1. 4500 iterations
 ![](images/gif/cat_vector.gif)
 
-3. 1000 iterations
+1. 1000 iterations
 ![](images/gif/creeper.gif)
 
-4. 2000 iterations
+1. 2000 iterations
 ![](images/gif/minion.gif)
 
-4. 4000 iterations
+1. 4000 iterations
 ![](images/gif/lenna.gif)
+
+1. 5000 iterations
+![](images/gif/me_1.gif)

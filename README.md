@@ -12,7 +12,7 @@ You can find output images in `output/<unique id for each run>/`
 
 ## Examples
 
-1. 400 iterations
+1. 4000 iterations
 
 ![](images/gif/cool.gif)
 
